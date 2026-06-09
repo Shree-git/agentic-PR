@@ -1,0 +1,8 @@
+.next/
+node_modules/
+coverage/
+data/
+tsconfig.tsbuildinfo
+.env
+.env.local
+run-log.json
