@@ -5,11 +5,16 @@ export interface PatchPlan {
   title: string;
   suspectedCause: string;
   confidence: "high" | "medium" | "low";
+  source: "catalog" | "openrouter";
+  model?: string;
+  reasoningTokens?: number | null;
   branchName: string;
   filePath: string;
+  replacementContent?: string;
   beforeSnippet: string;
   afterSnippet: string;
   diff: string;
+  validationNotes?: string[];
   prBody: string;
 }
 
@@ -19,6 +24,7 @@ const checkoutNullSession: PatchPlan = {
   suspectedCause:
     "The checkout handler assumes a session object exists before reading `session.user.id`. Sentry evidence points to a null/undefined session during checkout.",
   confidence: "high",
+  source: "catalog",
   branchName: "fix/checkout-null-session",
   filePath: "src/app/checkout/actions.ts",
   beforeSnippet: "const userId = session.user.id;",
@@ -75,6 +81,6 @@ The patch adds an explicit unauthenticated-session guard before checkout code de
 ${patch.confidence}
 
 ## Agent guardrail
-This PR was generated from a validated patch catalog entry. If this fingerprint had not matched the catalog, the agent would have opened an investigation issue instead of a fake or empty PR.
+This patch is the deterministic catalog fallback. If OpenRouter and the catalog cannot produce a concrete fix, the agent opens an investigation issue instead of an empty PR.
 `;
 }

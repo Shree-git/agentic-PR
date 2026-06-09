@@ -1,9 +1,10 @@
 "use client";
 
+import { ExternalLink, Loader2 } from "lucide-react";
 import { useState } from "react";
 import type { Toolkit } from "@/lib/types";
 
-export function ConnectToolkitButton({ toolkit }: { toolkit: Toolkit }) {
+export function ConnectToolkitButton({ toolkit, label = "Connect" }: { toolkit: Toolkit; label?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,11 +29,12 @@ export function ConnectToolkitButton({ toolkit }: { toolkit: Toolkit }) {
   }
 
   return (
-    <div>
-      <button type="button" onClick={connect} disabled={busy}>
-        {busy ? "Opening..." : `Connect ${toolkit}`}
+    <div className="connect-action">
+      <button className="button ghost" type="button" onClick={connect} disabled={busy}>
+        {busy ? <Loader2 size={16} aria-hidden /> : <ExternalLink size={16} aria-hidden />}
+        {busy ? "Opening" : label}
       </button>
-      {error ? <p className="muted">{error}</p> : null}
+      {error ? <p className="error-note">{error}</p> : null}
     </div>
   );
 }

@@ -1,11 +1,19 @@
-import { REQUIRED_TOOLKITS, type ReadinessCheck, type Toolkit, type ToolExecutionInput, type ToolResult } from "./types";
+import {
+  REQUIRED_TOOLKITS,
+  type ComposioLogEvidence,
+  type ReadinessCheck,
+  type Toolkit,
+  type ToolExecutionInput,
+  type ToolResult
+} from "./types";
 import { getLedger } from "./ledger";
 
-const DEFAULT_TOOL_SLUGS = {
-  linear_issue: "LINEAR_CREATE_ISSUE",
-  github_pr: "GITHUB_CREATE_PULL_REQUEST",
+export const DEFAULT_TOOL_SLUGS = {
+  linear_issue: "LINEAR_CREATE_LINEAR_ISSUE",
+  github_commit: "GITHUB_COMMIT_MULTIPLE_FILES",
+  github_pr: "GITHUB_CREATE_A_PULL_REQUEST",
   slack_update: "SLACK_SEND_MESSAGE",
-  sheets_audit: "GOOGLESHEETS_APPEND_ROW"
+  sheets_audit: "GOOGLESHEETS_UPSERT_ROWS"
 } as const;
 
 export async function checkReadiness(): Promise<ReadinessCheck> {
@@ -16,11 +24,22 @@ export async function checkReadiness(): Promise<ReadinessCheck> {
     return {
       mode,
       ready: true,
+      judgeReady: false,
       userId,
-      toolkits: REQUIRED_TOOLKITS.map((toolkit) => ({ toolkit, connected: true, reason: "mock mode" }))
+      toolkits: REQUIRED_TOOLKITS.map((toolkit) => ({ toolkit, connected: true, reason: "mock mode" })),
+      preflight: [
+        {
+          key: "mode",
+          label: "Real Composio mode",
+          ok: false,
+          required: true,
+          reason: "Judge demo requires COMPOSIO_MODE=real and live connected accounts."
+        }
+      ]
     };
   }
 
+  const preflight = buildConfigPreflight();
   try {
     const { Composio } = await import("@composio/core");
     const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
@@ -35,23 +54,39 @@ export async function checkReadiness(): Promise<ReadinessCheck> {
         reason: found?.connection?.isActive ? undefined : "not connected"
       };
     });
+    preflight.push(...(await buildToolPreflight(session)));
+    const ready = toolkits.every((toolkit) => toolkit.connected);
+    const judgeReady = ready && preflight.every((item) => !item.required || item.ok);
 
     return {
       mode,
       userId,
-      ready: toolkits.every((toolkit) => toolkit.connected),
-      toolkits
+      ready,
+      judgeReady,
+      toolkits,
+      preflight
     };
   } catch (error) {
     return {
       mode,
       userId,
       ready: false,
+      judgeReady: false,
       toolkits: REQUIRED_TOOLKITS.map((toolkit) => ({
         toolkit,
         connected: false,
         reason: error instanceof Error ? error.message : "Composio readiness check failed"
-      }))
+      })),
+      preflight: [
+        ...preflight,
+        {
+          key: "composio_session",
+          label: "Composio session",
+          ok: false,
+          required: true,
+          reason: error instanceof Error ? error.message : "Composio readiness check failed"
+        }
+      ]
     };
   }
 }
@@ -206,6 +241,47 @@ export function toolSlugFor(step: keyof typeof DEFAULT_TOOL_SLUGS): string {
   return process.env[envKey] ?? DEFAULT_TOOL_SLUGS[step];
 }
 
+export async function hydrateComposioLog(input: {
+  logId: string;
+  toolkit: Toolkit;
+  toolSlug: string;
+}): Promise<ComposioLogEvidence> {
+  const apiPath = `/api/v3.1/logs/tool_execution/${input.logId}`;
+  if (getComposioMode() === "mock" || input.logId.startsWith("mock-log-")) {
+    return {
+      logId: input.logId,
+      toolkit: input.toolkit,
+      toolSlug: input.toolSlug,
+      status: "success",
+      durationMs: null,
+      requestSummary: { mode: "mock" },
+      responseSummary: { mode: "mock" },
+      apiPath,
+      warning: "Mock execution log; not valid judge evidence."
+    };
+  }
+
+  try {
+    const { Composio } = await import("@composio/core");
+    const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+    const raw = await (composio as any).logs?.tools?.retrieve?.(input.logId);
+    if (!raw) throw new Error("Composio SDK did not expose logs.tools.retrieve");
+    return redactComposioLog(input, raw, apiPath);
+  } catch (error) {
+    return {
+      logId: input.logId,
+      toolkit: input.toolkit,
+      toolSlug: input.toolSlug,
+      status: "unknown",
+      durationMs: null,
+      requestSummary: {},
+      responseSummary: {},
+      apiPath,
+      warning: error instanceof Error ? error.message : "Failed to hydrate Composio log"
+    };
+  }
+}
+
 export function getComposioMode(): "mock" | "real" {
   if (process.env.COMPOSIO_MODE === "real") return "real";
   if (process.env.COMPOSIO_API_KEY && process.env.COMPOSIO_MODE !== "mock") return "real";
@@ -214,6 +290,163 @@ export function getComposioMode(): "mock" | "real" {
 
 export function getComposioUserId(): string {
   return process.env.COMPOSIO_USER_ID ?? "hackathon-demo-user";
+}
+
+function buildConfigPreflight(): ReadinessCheck["preflight"] {
+  const requiredEnv: Array<[string, string | undefined]> = [
+    ["COMPOSIO_API_KEY", process.env.COMPOSIO_API_KEY],
+    ["COMPOSIO_USER_ID", process.env.COMPOSIO_USER_ID],
+    ["DEMO_GITHUB_OWNER", process.env.DEMO_GITHUB_OWNER],
+    ["DEMO_GITHUB_REPO", process.env.DEMO_GITHUB_REPO],
+    ["DEMO_LINEAR_TEAM_ID or DEMO_LINEAR_TEAM", process.env.DEMO_LINEAR_TEAM_ID ?? process.env.DEMO_LINEAR_TEAM],
+    ["DEMO_SLACK_CHANNEL", process.env.DEMO_SLACK_CHANNEL],
+    ["DEMO_SHEET_ID", process.env.DEMO_SHEET_ID]
+  ];
+
+  return [
+    {
+      key: "mode",
+      label: "Real Composio mode",
+      ok: getComposioMode() === "real",
+      required: true,
+      reason: getComposioMode() === "real" ? undefined : "Set COMPOSIO_MODE=real for judge execution."
+    },
+    ...requiredEnv.map(([label, value]) => ({
+      key: `env_${label.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`,
+      label,
+      ok: hasRealValue(label, value),
+      required: true,
+      reason: hasRealValue(label, value) ? undefined : `${label} is missing or still uses a demo placeholder.`
+    }))
+  ];
+}
+
+async function buildToolPreflight(session: any): Promise<ReadinessCheck["preflight"]> {
+  const slugs = (Object.keys(DEFAULT_TOOL_SLUGS) as Array<keyof typeof DEFAULT_TOOL_SLUGS>).map((step) => toolSlugFor(step));
+  try {
+    const tools = typeof session.tools === "function" ? await session.tools() : null;
+    const items = Array.isArray(tools?.items) ? tools.items : Array.isArray(tools) ? tools : [];
+    if (!items.length) {
+      return [
+        {
+          key: "tool_schema",
+          label: "Tool schema availability",
+          ok: true,
+          required: false,
+          reason: "Composio SDK did not return tool schema list; live execution will still preload tools."
+        }
+      ];
+    }
+    return slugs.map((slug) => {
+      const found = items.some((item: any) => item.slug === slug || item.name === slug || item.key === slug);
+      return {
+        key: `tool_${slug}`,
+        label: slug,
+        ok: found,
+        required: false,
+        reason: found ? undefined : "Tool slug was not found in the session schema list; execution still preloads the slug at run time."
+      };
+    });
+  } catch (error) {
+    return [
+      {
+        key: "tool_schema",
+        label: "Tool schema availability",
+        ok: false,
+        required: false,
+        reason: error instanceof Error ? error.message : "Tool schema preflight failed"
+      }
+    ];
+  }
+}
+
+function hasRealValue(label: string, value: unknown): boolean {
+  if (typeof value !== "string" || value.trim().length === 0) return false;
+  if (label === "COMPOSIO_USER_ID") return true;
+  const normalized = value.toLowerCase();
+  if (normalized.includes("demo") || normalized.includes("example")) return false;
+  if (label.includes("GITHUB_OWNER") && normalized === "demo-org") return false;
+  if (label.includes("GITHUB_REPO") && normalized === "incident-fixtures") return false;
+  if (label.includes("SHEET") && normalized === "demo-sheet") return false;
+  return true;
+}
+
+function redactComposioLog(
+  input: { logId: string; toolkit: Toolkit; toolSlug: string },
+  raw: Record<string, unknown>,
+  apiPath: string
+): ComposioLogEvidence {
+  return {
+    logId: input.logId,
+    toolkit: input.toolkit,
+    toolSlug: input.toolSlug,
+    status: normalizeLogStatus(raw.status),
+    durationMs: durationFromLog(raw),
+    requestSummary: limitRecord(redactValue(raw.payloadReceived ?? firstNetworkRequest(raw))),
+    responseSummary: limitRecord(redactValue(raw.response ?? firstNetworkResponse(raw))),
+    apiPath
+  };
+}
+
+function normalizeLogStatus(value: unknown): ComposioLogEvidence["status"] {
+  if (value === "success" || value === "failed" || value === "error" || value === "warning" || value === "info") {
+    return value;
+  }
+  return "unknown";
+}
+
+function durationFromLog(raw: Record<string, unknown>): number | null {
+  if (typeof raw.totalDuration === "number") return raw.totalDuration;
+  if (typeof raw.totalDuration === "string") {
+    const parsed = Number(raw.totalDuration.replace(/[^\d.]/g, ""));
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  if (typeof raw.startTime === "number" && typeof raw.endTime === "number") return raw.endTime - raw.startTime;
+  return null;
+}
+
+function firstNetworkRequest(raw: Record<string, unknown>): unknown {
+  const steps = Array.isArray(raw.steps) ? raw.steps : [];
+  for (const step of steps as Array<Record<string, unknown>>) {
+    const logs = Array.isArray(step.logs) ? step.logs : [];
+    const found = (logs as Array<Record<string, unknown>>).find((log) => log.request);
+    if (found?.request) return found.request;
+  }
+  return {};
+}
+
+function firstNetworkResponse(raw: Record<string, unknown>): unknown {
+  const steps = Array.isArray(raw.steps) ? raw.steps : [];
+  for (const step of steps as Array<Record<string, unknown>>) {
+    const logs = Array.isArray(step.logs) ? step.logs : [];
+    const found = (logs as Array<Record<string, unknown>>).find((log) => log.response);
+    if (found?.response) return found.response;
+  }
+  return {};
+}
+
+function redactValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.slice(0, 10).map(redactValue);
+  if (!value || typeof value !== "object") return value;
+  const redacted: Record<string, unknown> = {};
+  for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+    if (/authorization|token|secret|password|api[_-]?key|cookie/i.test(key)) {
+      redacted[key] = "[redacted]";
+    } else {
+      redacted[key] = redactValue(item);
+    }
+  }
+  return redacted;
+}
+
+function limitRecord(value: unknown): Record<string, unknown> {
+  const record = value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : { value };
+  const json = JSON.stringify(record);
+  if (json.length <= 3000) return record;
+  return {
+    truncated: true,
+    preview: json.slice(0, 3000)
+  };
 }
 
 function classifyError(value: unknown): string {

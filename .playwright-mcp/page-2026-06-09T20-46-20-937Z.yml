@@ -1,0 +1,221 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation "Primary" [ref=e4]:
+        - link "Incident PR Autopilot Readiness gate" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img [ref=e7]
+          - generic [ref=e8]:
+            - generic [ref=e9]: Incident PR Autopilot
+            - generic [ref=e10]: Readiness gate
+        - generic [ref=e11]:
+          - link "Command" [ref=e12] [cursor=pointer]:
+            - /url: /
+          - link "Setup" [ref=e13] [cursor=pointer]:
+            - /url: /setup
+          - link "Home" [ref=e14] [cursor=pointer]:
+            - /url: /
+            - img [ref=e15]
+            - text: Home
+    - main [ref=e18]:
+      - region "Setup readiness" [ref=e19]:
+        - generic [ref=e20]:
+          - heading "Setup readiness" [level=1] [ref=e21]
+          - paragraph [ref=e22]: Dense readiness control for Composio apps, target configuration, and judge-run tool availability.
+      - region "Readiness matrix" [ref=e23]:
+        - generic "Readiness summary" [ref=e24]:
+          - generic [ref=e25]:
+            - img [ref=e26]
+            - generic [ref=e29]:
+              - generic [ref=e30]: Overall gate
+              - strong [ref=e31]: Ready
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - generic [ref=e34]: Mode
+              - strong [ref=e35]: real
+            - generic [ref=e36]:
+              - generic [ref=e37]: User
+              - strong [ref=e38]: hackathon-demo-user
+            - generic [ref=e39]:
+              - generic [ref=e40]: Connected
+              - strong [ref=e41]: 5/5
+            - generic [ref=e42]:
+              - generic [ref=e43]: Blockers
+              - strong [ref=e44]: "0"
+          - link "Refresh" [ref=e45] [cursor=pointer]:
+            - /url: /setup
+            - img [ref=e46]
+            - text: Refresh
+        - generic [ref=e51]:
+          - generic [ref=e52]: judge ready
+          - paragraph [ref=e53]: All required accounts and preflight checks are ready. Start the judge demo from the command center.
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - heading "Readiness matrix" [level=2] [ref=e56]
+            - paragraph [ref=e57]: Required configuration and connected apps for the judge run.
+          - generic [ref=e58]: 13 checks
+        - table "Setup readiness matrix" [ref=e59]:
+          - row "Item Status Requirement Reason Action" [ref=e60]:
+            - columnheader "Item" [ref=e61]
+            - columnheader "Status" [ref=e62]
+            - columnheader "Requirement" [ref=e63]
+            - columnheader "Reason" [ref=e64]
+            - columnheader "Action" [ref=e65]
+          - row "Sentry Toolkit · sentry Connected Incident trigger Authorized for live execution. No action" [ref=e66]:
+            - cell "Sentry Toolkit · sentry" [ref=e67]:
+              - img [ref=e69]
+              - generic [ref=e71]:
+                - strong [ref=e72]: Sentry
+                - generic [ref=e73]: Toolkit · sentry
+            - cell "Connected" [ref=e74]
+            - cell "Incident trigger" [ref=e75]
+            - cell "Authorized for live execution." [ref=e76]
+            - cell "No action" [ref=e77]:
+              - generic [ref=e78]: No action
+          - row "Linear Toolkit · linear Connected Investigation issue Authorized for live execution. No action" [ref=e79]:
+            - cell "Linear Toolkit · linear" [ref=e80]:
+              - img [ref=e82]
+              - generic [ref=e86]:
+                - strong [ref=e87]: Linear
+                - generic [ref=e88]: Toolkit · linear
+            - cell "Connected" [ref=e89]
+            - cell "Investigation issue" [ref=e90]
+            - cell "Authorized for live execution." [ref=e91]
+            - cell "No action" [ref=e92]:
+              - generic [ref=e93]: No action
+          - row "GitHub Toolkit · github Connected Validated pull request Authorized for live execution. No action" [ref=e94]:
+            - cell "GitHub Toolkit · github" [ref=e95]:
+              - img [ref=e97]
+              - generic [ref=e102]:
+                - strong [ref=e103]: GitHub
+                - generic [ref=e104]: Toolkit · github
+            - cell "Connected" [ref=e105]
+            - cell "Validated pull request" [ref=e106]
+            - cell "Authorized for live execution." [ref=e107]
+            - cell "No action" [ref=e108]:
+              - generic [ref=e109]: No action
+          - row "Slack Toolkit · slack Connected Responder update Authorized for live execution. No action" [ref=e110]:
+            - cell "Slack Toolkit · slack" [ref=e111]:
+              - img [ref=e113]
+              - generic [ref=e115]:
+                - strong [ref=e116]: Slack
+                - generic [ref=e117]: Toolkit · slack
+            - cell "Connected" [ref=e118]
+            - cell "Responder update" [ref=e119]
+            - cell "Authorized for live execution." [ref=e120]
+            - cell "No action" [ref=e121]:
+              - generic [ref=e122]: No action
+          - row "Google Sheets Toolkit · googlesheets Connected Audit ledger row Authorized for live execution. No action" [ref=e123]:
+            - cell "Google Sheets Toolkit · googlesheets" [ref=e124]:
+              - img [ref=e126]
+              - generic [ref=e128]:
+                - strong [ref=e129]: Google Sheets
+                - generic [ref=e130]: Toolkit · googlesheets
+            - cell "Connected" [ref=e131]
+            - cell "Audit ledger row" [ref=e132]
+            - cell "Authorized for live execution." [ref=e133]
+            - cell "No action" [ref=e134]:
+              - generic [ref=e135]: No action
+          - row "Real Composio mode Preflight · required Pass Required for judge run Ready No action" [ref=e136]:
+            - cell "Real Composio mode Preflight · required" [ref=e137]:
+              - img [ref=e139]
+              - generic [ref=e142]:
+                - strong [ref=e143]: Real Composio mode
+                - generic [ref=e144]: Preflight · required
+            - cell "Pass" [ref=e145]
+            - cell "Required for judge run" [ref=e146]
+            - cell "Ready" [ref=e147]
+            - cell "No action" [ref=e148]:
+              - generic [ref=e149]: No action
+          - row "COMPOSIO_API_KEY Preflight · required Pass Required for judge run Ready No action" [ref=e150]:
+            - cell "COMPOSIO_API_KEY Preflight · required" [ref=e151]:
+              - img [ref=e153]
+              - generic [ref=e156]:
+                - strong [ref=e157]: COMPOSIO_API_KEY
+                - generic [ref=e158]: Preflight · required
+            - cell "Pass" [ref=e159]
+            - cell "Required for judge run" [ref=e160]
+            - cell "Ready" [ref=e161]
+            - cell "No action" [ref=e162]:
+              - generic [ref=e163]: No action
+          - row "COMPOSIO_USER_ID Preflight · required Pass Required for judge run Ready No action" [ref=e164]:
+            - cell "COMPOSIO_USER_ID Preflight · required" [ref=e165]:
+              - img [ref=e167]
+              - generic [ref=e170]:
+                - strong [ref=e171]: COMPOSIO_USER_ID
+                - generic [ref=e172]: Preflight · required
+            - cell "Pass" [ref=e173]
+            - cell "Required for judge run" [ref=e174]
+            - cell "Ready" [ref=e175]
+            - cell "No action" [ref=e176]:
+              - generic [ref=e177]: No action
+          - row "DEMO_GITHUB_OWNER Preflight · required Pass Required for judge run Ready No action" [ref=e178]:
+            - cell "DEMO_GITHUB_OWNER Preflight · required" [ref=e179]:
+              - img [ref=e181]
+              - generic [ref=e184]:
+                - strong [ref=e185]: DEMO_GITHUB_OWNER
+                - generic [ref=e186]: Preflight · required
+            - cell "Pass" [ref=e187]
+            - cell "Required for judge run" [ref=e188]
+            - cell "Ready" [ref=e189]
+            - cell "No action" [ref=e190]:
+              - generic [ref=e191]: No action
+          - row "DEMO_GITHUB_REPO Preflight · required Pass Required for judge run Ready No action" [ref=e192]:
+            - cell "DEMO_GITHUB_REPO Preflight · required" [ref=e193]:
+              - img [ref=e195]
+              - generic [ref=e198]:
+                - strong [ref=e199]: DEMO_GITHUB_REPO
+                - generic [ref=e200]: Preflight · required
+            - cell "Pass" [ref=e201]
+            - cell "Required for judge run" [ref=e202]
+            - cell "Ready" [ref=e203]
+            - cell "No action" [ref=e204]:
+              - generic [ref=e205]: No action
+          - row "DEMO_LINEAR_TEAM_ID or DEMO_LINEAR_TEAM Preflight · required Pass Required for judge run Ready No action" [ref=e206]:
+            - cell "DEMO_LINEAR_TEAM_ID or DEMO_LINEAR_TEAM Preflight · required" [ref=e207]:
+              - img [ref=e209]
+              - generic [ref=e212]:
+                - strong [ref=e213]: DEMO_LINEAR_TEAM_ID or DEMO_LINEAR_TEAM
+                - generic [ref=e214]: Preflight · required
+            - cell "Pass" [ref=e215]
+            - cell "Required for judge run" [ref=e216]
+            - cell "Ready" [ref=e217]
+            - cell "No action" [ref=e218]:
+              - generic [ref=e219]: No action
+          - row "DEMO_SLACK_CHANNEL Preflight · required Pass Required for judge run Ready No action" [ref=e220]:
+            - cell "DEMO_SLACK_CHANNEL Preflight · required" [ref=e221]:
+              - img [ref=e223]
+              - generic [ref=e226]:
+                - strong [ref=e227]: DEMO_SLACK_CHANNEL
+                - generic [ref=e228]: Preflight · required
+            - cell "Pass" [ref=e229]
+            - cell "Required for judge run" [ref=e230]
+            - cell "Ready" [ref=e231]
+            - cell "No action" [ref=e232]:
+              - generic [ref=e233]: No action
+          - row "DEMO_SHEET_ID Preflight · required Pass Required for judge run Ready No action" [ref=e234]:
+            - cell "DEMO_SHEET_ID Preflight · required" [ref=e235]:
+              - img [ref=e237]
+              - generic [ref=e240]:
+                - strong [ref=e241]: DEMO_SHEET_ID
+                - generic [ref=e242]: Preflight · required
+            - cell "Pass" [ref=e243]
+            - cell "Required for judge run" [ref=e244]
+            - cell "Ready" [ref=e245]
+            - cell "No action" [ref=e246]:
+              - generic [ref=e247]: No action
+        - group [ref=e248]:
+          - generic "+ Optional diagnostics 5 schema checks not confirmed by SDK discovery" [ref=e249] [cursor=pointer]:
+            - text: + Optional diagnostics
+            - generic [ref=e250]: 5 schema checks not confirmed by SDK discovery
+        - generic [ref=e251]:
+          - generic [ref=e252]:
+            - img [ref=e253]
+            - text: Ready path
+          - paragraph [ref=e256]: Return to Command and start a judge run. Validated incidents can create issues, commits, pull requests, Slack updates, and ledger rows.
+          - link "Command" [ref=e257] [cursor=pointer]:
+            - /url: /
+            - img [ref=e258]
+            - text: Command
+  - button "Open Next.js Dev Tools" [ref=e267] [cursor=pointer]:
+    - img [ref=e268]

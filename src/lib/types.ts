@@ -10,8 +10,12 @@ export type StepStatus = "pending" | "running" | "success" | "failed" | "skipped
 
 export type StepName =
   | "received"
+  | "sentry_trigger"
   | "linear_issue"
+  | "patch_validation"
   | "patch_catalog"
+  | "llm_patch"
+  | "github_commit"
   | "github_pr"
   | "slack_update"
   | "sheets_audit"
@@ -27,7 +31,31 @@ export interface Incident {
   message: string;
   culprit?: string;
   stackTrace?: string;
+  context?: {
+    issueId?: string;
+    eventId?: string;
+    project?: string;
+    environment?: string;
+    release?: string;
+    url?: string;
+    triggerLogId?: string;
+    triggerProvider?: string;
+    triggerName?: string;
+    tags?: Record<string, string>;
+  };
   raw: unknown;
+}
+
+export interface ComposioLogEvidence {
+  logId: string;
+  toolkit: Toolkit;
+  toolSlug: string;
+  status: "success" | "failed" | "error" | "warning" | "info" | "unknown";
+  durationMs: number | null;
+  requestSummary: Record<string, unknown>;
+  responseSummary: Record<string, unknown>;
+  apiPath: string;
+  warning?: string;
 }
 
 export interface RunRecord {
@@ -106,11 +134,19 @@ export type ToolResult = ToolExecutionResult | ToolExecutionFailure;
 export interface ReadinessCheck {
   mode: "mock" | "real";
   ready: boolean;
+  judgeReady: boolean;
   userId: string;
   toolkits: Array<{
     toolkit: Toolkit;
     connected: boolean;
     reason?: string;
     connectUrl?: string;
+  }>;
+  preflight: Array<{
+    key: string;
+    label: string;
+    ok: boolean;
+    required: boolean;
+    reason?: string;
   }>;
 }

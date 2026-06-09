@@ -14,10 +14,14 @@ export function getLedger(): Promise<RunLedger> {
   return ledgerPromise;
 }
 
+export function setLedgerForTests(ledger: RunLedger | null): void {
+  ledgerPromise = ledger ? Promise.resolve(ledger) : null;
+}
+
 export class RunLedger {
   private constructor(
     private readonly SQL: SqlJsStatic,
-    private readonly db: Database,
+    private db: Database,
     private readonly persistToDisk: boolean
   ) {}
 
@@ -36,6 +40,7 @@ export class RunLedger {
   }
 
   createOrGetRun(incident: Incident): { run: RunRecord; created: boolean } {
+    this.reloadFromDisk();
     const existing = this.getRunByFingerprint(incident.fingerprint);
     if (existing) return { run: existing, created: false };
 
@@ -63,22 +68,26 @@ export class RunLedger {
   }
 
   listRuns(): RunRecord[] {
+    this.reloadFromDisk();
     return this.query(`SELECT * FROM runs ORDER BY created_at DESC LIMIT 50`).map(mapRun);
   }
 
   getRun(id: string): RunRecord {
+    this.reloadFromDisk();
     const row = this.queryOne(`SELECT * FROM runs WHERE id = ?`, [id]);
     if (!row) throw new Error(`Run not found: ${id}`);
     return mapRun(row);
   }
 
   getIncident(id: string): Incident {
+    this.reloadFromDisk();
     const row = this.queryOne(`SELECT incident_json FROM runs WHERE id = ?`, [id]);
     if (!row?.incident_json) throw new Error(`Incident not found for run: ${id}`);
     return JSON.parse(String(row.incident_json)) as Incident;
   }
 
   getBundle(id: string): RunBundle {
+    this.reloadFromDisk();
     return {
       run: this.getRun(id),
       steps: this.query(`SELECT * FROM run_steps WHERE run_id = ? ORDER BY started_at, rowid`, [id]).map(mapStep),
@@ -87,6 +96,7 @@ export class RunLedger {
   }
 
   setRunStatus(id: string, status: RunStatus, currentStep: StepName | null, errorMessage: string | null = null): void {
+    this.reloadFromDisk();
     this.db.run(`UPDATE runs SET status = ?, current_step = ?, error_message = ?, updated_at = ? WHERE id = ?`, [
       status,
       currentStep,
@@ -104,6 +114,7 @@ export class RunLedger {
     toolSlug: string;
     idempotencyKey: string;
   }): void {
+    this.reloadFromDisk();
     const now = new Date().toISOString();
     this.db.run(
       `INSERT OR IGNORE INTO run_steps
@@ -117,7 +128,14 @@ export class RunLedger {
        WHERE run_id = ? AND idempotency_key = ?`,
       ["running", now, input.runId, input.idempotencyKey]
     );
-    this.setRunStatus(input.runId, "running", input.step);
+    this.db.run(`UPDATE runs SET status = ?, current_step = ?, error_message = ?, updated_at = ? WHERE id = ?`, [
+      "running",
+      input.step,
+      null,
+      new Date().toISOString(),
+      input.runId
+    ]);
+    this.save();
   }
 
   finishStep(input: {
@@ -130,6 +148,7 @@ export class RunLedger {
     message?: string | null;
     data?: unknown;
   }): void {
+    this.reloadFromDisk();
     this.db.run(
       `UPDATE run_steps
        SET status = ?, latency_ms = ?, composio_log_id = COALESCE(?, composio_log_id), error_code = ?, message = ?, data_json = ?, finished_at = ?
@@ -156,6 +175,7 @@ export class RunLedger {
     externalId: string;
     externalUrl: string;
   }): ArtifactRecord {
+    this.reloadFromDisk();
     const existing = this.queryOne(`SELECT * FROM artifacts WHERE run_id = ? AND kind = ?`, [input.runId, input.kind]);
     if (existing) return mapArtifact(existing);
 
@@ -243,6 +263,11 @@ export class RunLedger {
     if (!this.persistToDisk) return;
     fs.mkdirSync(DATA_DIR, { recursive: true });
     fs.writeFileSync(DB_PATH, Buffer.from(this.db.export()));
+  }
+
+  private reloadFromDisk(): void {
+    if (!this.persistToDisk || !fs.existsSync(DB_PATH)) return;
+    this.db = new this.SQL.Database(fs.readFileSync(DB_PATH));
   }
 }
 

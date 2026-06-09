@@ -1,0 +1,215 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation "Primary" [ref=e4]:
+        - link "Incident PR Autopilot Auditable automation" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img [ref=e7]
+          - generic [ref=e8]:
+            - generic [ref=e9]: Incident PR Autopilot
+            - generic [ref=e10]: Auditable automation
+        - generic [ref=e11]:
+          - link "Command" [ref=e12] [cursor=pointer]:
+            - /url: /
+          - link "Setup" [ref=e13] [cursor=pointer]:
+            - /url: /setup
+          - link "Readiness" [ref=e14] [cursor=pointer]:
+            - /url: /setup
+            - img [ref=e15]
+            - text: Readiness
+    - main [ref=e18]:
+      - region "Incident response that opens PRs only when the evidence is strong." [ref=e19]:
+        - generic [ref=e20]:
+          - heading "Incident response that opens PRs only when the evidence is strong." [level=1] [ref=e21]
+          - paragraph [ref=e22]: Composio coordinates Linear, GitHub, Slack, Sheets, and execution logs into one judge-ready audit trail.
+      - generic [ref=e23]:
+        - region "Incident-to-PR execution path" [ref=e24]:
+          - generic [ref=e26]:
+            - heading "Incident-to-PR execution path" [level=2] [ref=e27]
+            - paragraph [ref=e28]: Every transition leaves an artifact, a tool slug, or a log ID.
+          - generic [ref=e29]:
+            - generic [ref=e30]:
+              - img [ref=e32]
+              - strong [ref=e39]: Incident
+              - generic [ref=e40]: Slack or Sentry trigger
+            - generic [ref=e41]:
+              - img [ref=e43]
+              - strong [ref=e46]: OpenRouter patch
+              - generic [ref=e47]: Kimi fix planning
+            - generic [ref=e48]:
+              - img [ref=e50]
+              - strong [ref=e53]: Linear issue
+              - generic [ref=e54]: Investigation record
+            - generic [ref=e55]:
+              - img [ref=e57]
+              - strong [ref=e62]: GitHub PR
+              - generic [ref=e63]: Only when safe
+            - generic [ref=e64]:
+              - img [ref=e66]
+              - strong [ref=e68]: Slack update
+              - generic [ref=e69]: Responder context
+            - generic [ref=e70]:
+              - img [ref=e72]
+              - strong [ref=e74]: Sheets audit
+              - generic [ref=e75]: Durable ledger row
+            - generic [ref=e76]:
+              - img [ref=e78]
+              - strong [ref=e83]: Composio logs
+              - generic [ref=e84]: Tool evidence IDs
+        - generic [ref=e85]:
+          - region "Run the judge demo" [ref=e86]:
+            - generic [ref=e87]:
+              - generic [ref=e88]:
+                - heading "Run the judge demo" [level=2] [ref=e89]
+                - paragraph [ref=e90]: Starts the Slack fallback trigger only when real Composio readiness and target preflight pass.
+              - img [ref=e91]
+            - generic "Judge readiness" [ref=e93]:
+              - generic [ref=e94]: checking mode
+              - generic [ref=e95]: judge blocked
+            - generic "Demo incident payload" [ref=e96]:
+              - code [ref=e97]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checkout session path"
+            - button "Start incident-to-PR run" [ref=e98] [cursor=pointer]:
+              - img [ref=e99]
+              - text: Start incident-to-PR run
+          - region "Execution contract" [ref=e101]:
+            - generic [ref=e103]:
+              - heading "Execution contract" [level=2] [ref=e104]
+              - paragraph [ref=e105]: The agent is allowed to act only inside these rails.
+            - generic [ref=e106]:
+              - generic [ref=e107]:
+                - img [ref=e108]
+                - generic [ref=e111]:
+                  - strong [ref=e112]: Generated fixes create PRs
+                  - generic [ref=e113]: GitHub opens after OpenRouter returns a structured fix or the catalog fallback matches.
+              - generic [ref=e114]:
+                - img [ref=e115]
+                - generic [ref=e118]:
+                  - strong [ref=e119]: Unknown incidents become investigation issues
+                  - generic [ref=e120]: No empty PRs, no fabricated patches, and no ungrounded remediation claims.
+              - generic [ref=e121]:
+                - img [ref=e122]
+                - generic [ref=e127]:
+                  - strong [ref=e128]: Every tool call is traceable
+                  - generic [ref=e129]: Composio log IDs, latency, attempts, and artifacts stay attached to the run.
+        - region "Recent runs" [ref=e130]:
+          - generic [ref=e132]:
+            - heading "Recent runs" [level=2] [ref=e133]
+            - paragraph [ref=e134]: Open any run for its evidence console and exportable audit log.
+          - generic [ref=e135]:
+            - generic [ref=e136]: Incident
+            - generic [ref=e137]: Status
+            - generic [ref=e138]: Outcome
+            - generic [ref=e139]: Updated
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_h_dVPHdMbG complete PR opened Jun 8, 9:25 PM" [ref=e140] [cursor=pointer]':
+            - /url: /runs/run_h_dVPHdMbG
+            - generic [ref=e141]:
+              - strong [ref=e142]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e143]: run_h_dVPHdMbG
+            - generic [ref=e144]: complete
+            - generic [ref=e145]: PR opened
+            - generic [ref=e146]: Jun 8, 9:25 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_7VMX89ZB8u complete PR opened Jun 8, 8:59 PM" [ref=e147] [cursor=pointer]':
+            - /url: /runs/run_7VMX89ZB8u
+            - generic [ref=e148]:
+              - strong [ref=e149]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e150]: run_7VMX89ZB8u
+            - generic [ref=e151]: complete
+            - generic [ref=e152]: PR opened
+            - generic [ref=e153]: Jun 8, 8:59 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') run_wS61Y-rRTm complete PR opened Jun 8, 8:34 PM" [ref=e154] [cursor=pointer]':
+            - /url: /runs/run_wS61Y-rRTm
+            - generic [ref=e155]:
+              - strong [ref=e156]: "Critical checkout incident: Cannot read properties of undefined (reading 'user')"
+              - generic [ref=e157]: run_wS61Y-rRTm
+            - generic [ref=e158]: complete
+            - generic [ref=e159]: PR opened
+            - generic [ref=e160]: Jun 8, 8:34 PM
+          - link "Sentry incident run_8T4JnzwyBF complete PR opened Jun 8, 8:32 PM" [ref=e161] [cursor=pointer]:
+            - /url: /runs/run_8T4JnzwyBF
+            - generic [ref=e162]:
+              - strong [ref=e163]: Sentry incident
+              - generic [ref=e164]: run_8T4JnzwyBF
+            - generic [ref=e165]: complete
+            - generic [ref=e166]: PR opened
+            - generic [ref=e167]: Jun 8, 8:32 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') run_80i8LhB7Fo failed Failed Jun 8, 8:29 PM" [ref=e168] [cursor=pointer]':
+            - /url: /runs/run_80i8LhB7Fo
+            - generic [ref=e169]:
+              - strong [ref=e170]: "Critical checkout incident: Cannot read properties of undefined (reading 'user')"
+              - generic [ref=e171]: run_80i8LhB7Fo
+            - generic [ref=e172]: failed
+            - generic [ref=e173]: Failed
+            - generic [ref=e174]: Jun 8, 8:29 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_XZEkDv2kQE running In progress Jun 8, 8:28 PM" [ref=e175] [cursor=pointer]':
+            - /url: /runs/run_XZEkDv2kQE
+            - generic [ref=e176]:
+              - strong [ref=e177]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e178]: run_XZEkDv2kQE
+            - generic [ref=e179]: running
+            - generic [ref=e180]: In progress
+            - generic [ref=e181]: Jun 8, 8:28 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_oJVcb5QkQr running In progress Jun 8, 8:28 PM" [ref=e182] [cursor=pointer]':
+            - /url: /runs/run_oJVcb5QkQr
+            - generic [ref=e183]:
+              - strong [ref=e184]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e185]: run_oJVcb5QkQr
+            - generic [ref=e186]: running
+            - generic [ref=e187]: In progress
+            - generic [ref=e188]: Jun 8, 8:28 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') run_MsRGZS1h-e failed Failed Jun 8, 8:27 PM" [ref=e189] [cursor=pointer]':
+            - /url: /runs/run_MsRGZS1h-e
+            - generic [ref=e190]:
+              - strong [ref=e191]: "Critical checkout incident: Cannot read properties of undefined (reading 'user')"
+              - generic [ref=e192]: run_MsRGZS1h-e
+            - generic [ref=e193]: failed
+            - generic [ref=e194]: Failed
+            - generic [ref=e195]: Jun 8, 8:27 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') run_nSomj5zQNF complete PR opened Jun 8, 8:10 PM" [ref=e196] [cursor=pointer]':
+            - /url: /runs/run_nSomj5zQNF
+            - generic [ref=e197]:
+              - strong [ref=e198]: "Critical checkout incident: Cannot read properties of undefined (reading 'user')"
+              - generic [ref=e199]: run_nSomj5zQNF
+            - generic [ref=e200]: complete
+            - generic [ref=e201]: PR opened
+            - generic [ref=e202]: Jun 8, 8:10 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_jgCpG1C21I complete PR opened Jun 8, 8:06 PM" [ref=e203] [cursor=pointer]':
+            - /url: /runs/run_jgCpG1C21I
+            - generic [ref=e204]:
+              - strong [ref=e205]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e206]: run_jgCpG1C21I
+            - generic [ref=e207]: complete
+            - generic [ref=e208]: PR opened
+            - generic [ref=e209]: Jun 8, 8:06 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_9BSME_cpu4 complete PR opened Jun 8, 7:58 PM" [ref=e210] [cursor=pointer]':
+            - /url: /runs/run_9BSME_cpu4
+            - generic [ref=e211]:
+              - strong [ref=e212]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e213]: run_9BSME_cpu4
+            - generic [ref=e214]: complete
+            - generic [ref=e215]: PR opened
+            - generic [ref=e216]: Jun 8, 7:58 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_0VAAsOKlRm failed Failed Jun 8, 7:57 PM" [ref=e217] [cursor=pointer]':
+            - /url: /runs/run_0VAAsOKlRm
+            - generic [ref=e218]:
+              - strong [ref=e219]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e220]: run_0VAAsOKlRm
+            - generic [ref=e221]: failed
+            - generic [ref=e222]: Failed
+            - generic [ref=e223]: Jun 8, 7:57 PM
+          - link "Search results load slowly for enterprise accounts run_PcgrV4tQd7 partial Investigation only Jun 8, 4:46 PM" [ref=e224] [cursor=pointer]:
+            - /url: /runs/run_PcgrV4tQd7
+            - generic [ref=e225]:
+              - strong [ref=e226]: Search results load slowly for enterprise accounts
+              - generic [ref=e227]: run_PcgrV4tQd7
+            - generic [ref=e228]: partial
+            - generic [ref=e229]: Investigation only
+            - generic [ref=e230]: Jun 8, 4:46 PM
+          - 'link "Critical checkout incident: Cannot read properties of undefined (reading ''user'') in checko run_UkV1LsVANU complete PR opened Jun 8, 4:46 PM" [ref=e231] [cursor=pointer]':
+            - /url: /runs/run_UkV1LsVANU
+            - generic [ref=e232]:
+              - strong [ref=e233]: "Critical checkout incident: Cannot read properties of undefined (reading 'user') in checko"
+              - generic [ref=e234]: run_UkV1LsVANU
+            - generic [ref=e235]: complete
+            - generic [ref=e236]: PR opened
+            - generic [ref=e237]: Jun 8, 4:46 PM
+  - alert [ref=e238]

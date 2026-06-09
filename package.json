@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@composio/core": "^0.9.0",
+    "@openrouter/sdk": "^0.12.79",
     "@types/sql.js": "^1.4.9",
+    "lucide-react": "^1.17.0",
     "nanoid": "^5.1.6",
     "next": "^16.0.7",
     "react": "^19.2.1",
