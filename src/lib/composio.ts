@@ -56,6 +56,27 @@ export async function checkReadiness(): Promise<ReadinessCheck> {
   }
 }
 
+export async function createConnectionLink(toolkit: Toolkit, callbackUrl?: string): Promise<string> {
+  if (getComposioMode() === "mock") {
+    throw new Error("Connection links are only available in real Composio mode.");
+  }
+
+  const { Composio } = await import("@composio/core");
+  const composio = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+  const session = await (composio as any).create(getComposioUserId(), { toolkits: [toolkit] });
+  const connectionRequest = await session.authorize(
+    toolkit,
+    callbackUrl ? { callbackUrl } : undefined
+  );
+  const redirectUrl = connectionRequest?.redirectUrl ?? connectionRequest?.redirect_url;
+
+  if (!redirectUrl) {
+    throw new Error(`Composio did not return a redirect URL for ${toolkit}.`);
+  }
+
+  return String(redirectUrl);
+}
+
 export async function executeTool(input: ToolExecutionInput): Promise<ToolResult> {
   const ledger = await getLedger();
   const started = Date.now();

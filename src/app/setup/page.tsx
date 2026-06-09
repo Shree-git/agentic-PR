@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { checkReadiness } from "@/lib/composio";
+import { ConnectToolkitButton } from "@/components/ConnectToolkitButton";
 
 export default async function SetupPage() {
   const readiness = await checkReadiness();
@@ -22,6 +23,9 @@ export default async function SetupPage() {
           <span className={`badge ${readiness.ready ? "complete" : "failed"}`}>{readiness.ready ? "ready" : "blocked"}</span>
         </div>
         <p className="muted">User ID: {readiness.userId}</p>
+        <p className="muted">
+          Missing apps can be connected with Composio Connect Links. After authorizing an app, return here and refresh readiness.
+        </p>
         <ul className="list">
           {readiness.toolkits.map((toolkit) => (
             <li key={toolkit.toolkit} className="row">
@@ -32,6 +36,7 @@ export default async function SetupPage() {
                 </span>
               </div>
               {toolkit.reason ? <p className="muted">{toolkit.reason}</p> : null}
+              {!toolkit.connected && readiness.mode === "real" ? <ConnectToolkitButton toolkit={toolkit.toolkit} /> : null}
             </li>
           ))}
         </ul>
